@@ -49,6 +49,28 @@ img{
     font-weight: bold;
 }
 
+.icono-grande{
+    font-size: 25px;
+}
+
+.btn-eliminar{
+    width: 60px;
+    border: 1px solid #f5e1ce;
+    background-color: #f5e1ce;
+
+}
+
+.btn-eliminar:hover{
+    background-color: #ffc58f;
+    border: 1px solid black;
+}
+
+@media (max-width: 991px) {
+    .bg-form{
+        width: 100%;
+    }
+}
+
 @media (min-width: 992px) {
     .bg-form{
         width: 50%;

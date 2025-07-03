@@ -1,8 +1,9 @@
-import { useState} from "react";
+import { useState, useEffect } from "react";
 import { Form, Button } from "react-bootstrap"
 import { useForm } from "react-hook-form";
 import Swal from 'sweetalert2'
 import ListaMascotas from "./ListaMascotas";
+import { v4 as uuidv4 } from 'uuid';
 
 const FormularioCitas = () => {
     const {
@@ -12,10 +13,41 @@ const FormularioCitas = () => {
         formState: { errors },
     } = useForm()
 
-    const [citas, setCitas] = useState([])
+    const citasLocalStorage = JSON.parse(localStorage.getItem('citas')) || [];
+    const [citas, setCitas] = useState(citasLocalStorage);
+
+    useEffect(() => {
+        if (citas.length > 0) {
+            localStorage.setItem('citas', JSON.stringify(citas));
+        }
+    }, [citas]);
+
+    const borrarCita = (idCita) => {
+        Swal.fire({
+            title: "¿Desea eliminar la cita?",
+            text: "No podrá revertir esta acción",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Eliminar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const citasFiltradas = citas.filter((itemCita) => itemCita.id !== idCita);
+                setCitas(citasFiltradas);
+                Swal.fire({
+                    title: "Cita eliminada",
+                    text: "La cita ha sido eliminada.",
+                    icon: "success"
+                });
+            }
+        });
+    }
 
     const agregarCita = (dato) => {
         const cita = {
+            id: uuidv4(),
             nombreMascota: dato.nombreMascota,
             nombreDuenio: dato.nombreDuenio,
             fechaConsulta: dato.fechaConsulta,
@@ -109,7 +141,7 @@ const FormularioCitas = () => {
                     Agregar cita
                 </Button>
             </Form>
-            <ListaMascotas citas={citas}></ListaMascotas>
+            <ListaMascotas citas={citas} borrarCita={borrarCita}></ListaMascotas>
         </>
     );
 };
